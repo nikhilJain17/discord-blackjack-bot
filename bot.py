@@ -20,7 +20,7 @@ class CardGameClient(discord.Client):
 
     game_stats = [] # nice feat...keep track of who is winning and losing :3
     current_games = []
-    blackjack_game = None
+    player_game_dict = {}
 
     async def on_ready(self):
         print(LOGGING_NAME + LOG_DEBUG + str(client.user) + " has connected to the server " + str(client.guilds[0].name ))
@@ -33,25 +33,28 @@ class CardGameClient(discord.Client):
         print(message.channel)
         print(message.content)
 
+        player = str(message.author)
+
         # start a game...in a new thread???
         if (message.content == "--blackjack start"):
+            if player not in self.player_game_dict.keys():
             # init a game
-            blackjack_game = Blackjack(message.author)
-            # while not blackjack_game.game_over:
-                # read in what the user plays
+                new_game = Blackjack(player)
+                self.current_games.append(new_game)
+                self.player_game_dict[player] = new_game
+            else:
+                print(LOGGING_NAME + LOG_ERR + player + "is already in game!")
 
         # figure out how to do repl loop
         if message.content == "--blackjack hit":
-            # @todo find the game that user is in... no multiple games!
-            print("user wants hit")
+            if player in self.player_game_dict.keys():
+                curr_game = self.player_game_dict[player]
+            else:
+                print('bitch')
         elif message.content == "--blackjack stay":
-            # @todo find the game that user is in... no multiple games!
             print("stay horsey")
         elif message.content == "--blackjack quit":
-            # @todo find the game that user is in... no multiple games!
             print("haha loser")
-            blackjack_game.winner = blackjack_game.players[1]
-            blackjack_game.game_over = True
                 
 
         # if message
