@@ -4,6 +4,7 @@ import sys
 import discord
 from dotenv import load_dotenv
 from blackjack import Blackjack
+import time
 
 LOGGING_NAME = "[Discord-Card-Bot] "
 LOG_ERR = "(ERROR) "
@@ -35,16 +36,18 @@ class CardGameClient(discord.Client):
         print(message.channel)
         print(message.content)
 
-        player = str(message.author)
+        player_name = str(message.author)
 
         # start a game...in a new thread???
         if (message.content == "--blackjack start"):
-            if player not in self.player_game_dict.keys():
+            if player_name not in self.player_game_dict.keys():
             # init a game
-                new_game = Blackjack(player)
+                new_game = Blackjack(player_name)
                 self.current_games.append(new_game)
-                self.player_game_dict[player] = new_game
+                self.player_game_dict[player_name] = new_game
                 print(new_game.game_state_log())
+                await message.channel.send("New Game between " + player_name + " and CPU. This will be legendary!!!")
+                await message.channel.send(new_game.players[player_name].log_player_hand())
 
                 # need to display one of dealer's cards face up 
 
@@ -52,27 +55,42 @@ class CardGameClient(discord.Client):
                 # in this case, since its first round, it's if anyone has a natural
 
             else:
-                print(LOGGING_NAME + LOG_ERR + player + " is already in game!")
+                print(LOGGING_NAME + LOG_ERR + player_name + " is already in game!")
 
         # @todo figure out how to do repl loop here
         if message.content == "--blackjack hit":
-            if player in self.player_game_dict.keys():
-                curr_game = self.player_game_dict[player]
+            # is it a valid game?
+            if player_name in self.player_game_dict.keys():
+                curr_game = self.player_game_dict[player_name]
+                # await message.channel.send(LOG_DEBUG + curr_game.game_state_msg())
+                # await message.channel.send(player_name + " chose to hit.")
+                # draw a card
+                new_card = curr_game.hit(player_name, 1)
+                await message.channel.send(player_name + " drew " + new_card[0].__str__())
+                await message.channel.send("After hitting, " + curr_game.players[player_name].log_player_hand())
+                if curr_game.calculate_bust(player_name):
+                    await message.channel.send(player_name + " busted! F")
+                    # end the game by removing from dictionary :(
+                    self.player_game_dict.pop(player_name)
+                    # @todo have cpu play it out?
             else:
-                print(LOGGING_NAME + LOG_ERR + player + " is not in a game!")
+                await message.channel.send(player_name + " is not in a game! To play, use --blackjack start.")
+                print(LOGGING_NAME + LOG_ERR + player_name + " is not in a game!")
+
         elif message.content == "--blackjack stay":
             # if the player stays, then the dealer plays
             # @todo dealer logic here
             print("stay horsey")
-            await message.channel.send(player + " chose to stay. Dealer's turn!")
-            if player in self.player_game_dict.keys():
-                curr_game = self.player_game_dict[player]
-                print(LOGGING_NAME + LOG_GAME + player + " has chosen to stay. Dealer's turn!")
-                curr_game.curr_player_turn = curr_game.players[1] # set it to CPU's turn (@todo need a better way than just 2 elem array of players lol)
+            await message.channel.send(player_name + " chose to stay. Dealer's turn!")
+            if player_name in self.player_game_dict.keys():
+                curr_game = self.player_game_dict[player_name]
+                print(LOGGING_NAME + LOG_GAME + player_name + " has chosen to stay. Dealer's turn!")
+                curr_game.curr_player_turn = curr_game.players["CPU"] # set it to CPU's turn (@todo need a better way than just 2 elem array of players lol)
                 print(curr_game.game_state_log())
 
             else:
-                print(LOGGING_NAME + LOG_ERR + player + " is not in a game!")
+                await message.channel.send(player_name + " is not in a game!")
+                print(LOGGING_NAME + LOG_ERR + player_name + " is not in a game!")
 
             
             # Dealer Gameplay:
@@ -85,6 +103,9 @@ class CardGameClient(discord.Client):
             print("haha loser")
         elif message.content == "--blackjack help":
             print("This is a help message")
+        elif message.content == "--blackjack 69420":
+            time.sleep(1)
+            await message.channel.send("--blackjack 69420")
                 
 
         # if message
