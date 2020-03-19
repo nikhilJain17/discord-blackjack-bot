@@ -24,8 +24,10 @@ class Blackjack():
         self.deck = Deck() # assume its generated properly
 
         # @todo deal every player 2 cards
-        for player_key in self.players.keys():
-            self.hit(player_key, 2)
+        # for player_key in self.players.keys():
+        #     self.hit(player_key, 2)
+        for player in self.players.values():
+            player.hand = self.deck.draw(2)
         # map((lambda player_name : self.hit(player_name, 2)), self.players.keys())
         
         self.curr_player_turn = self.players[player_name]
