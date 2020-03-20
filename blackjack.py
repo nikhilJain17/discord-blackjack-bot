@@ -122,7 +122,12 @@ class Card():
         return "<" + str(self.name) + " of " + str(self.suit) + "> "
 
     def img_filename(self):
-        return "./card_assets/" + self.name[0] + self.suit[0] + ".jpg"
+        filename = "./card_assets/" + self.name[0] + self.suit[0] + ".jpg"
+        # 10D.jpg
+        if self.name == "10":
+            filename = "./card_assets/" + self.name + self.suit[0] + ".jpg"
+        print(LOGGING_NAME, LOG_DEBUG, "card is:", str(self), "filename is:", filename)
+        return filename
         
 
     
@@ -134,7 +139,7 @@ class Deck():
         # generate deck lmoa
         self.deck = []
         for suit in ["Club", "Heart", "Spade", "Diamond"]:
-            for name, value in [("King", 10),("Queen", 10), ("Jack", 10), ("10", 10), ("9", 9), 
+            for name, value in [("Ace", 1), ("King", 10),("Queen", 10), ("Jack", 10), ("10", 10), ("9", 9), 
             ("8", 8), ("7", 7), ("6", 6), ("5", 5), ("4", 4), ("3", 3), ("2", 2)]:
                 self.deck.append(Card(name, suit, value))
         

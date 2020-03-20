@@ -41,13 +41,15 @@ class CardGameClient(discord.Client):
         # start a game...in a new thread???
         if (message.content == "--blackjack start"):
             if player_name not in self.player_game_dict.keys():
-            # init a game
+                # init a game
                 new_game = Blackjack(player_name)
                 self.current_games.append(new_game)
                 self.player_game_dict[player_name] = new_game
                 print(new_game.game_state_log())
                 await message.channel.send("New Game between " + player_name + " and CPU!!!")
-                await message.channel.send(new_game.players[player_name].log_player_hand())
+                # await message.channel.send(new_game.players[player_name].log_player_hand())
+                for card in new_game.players[player_name].hand:
+                    await message.channel.send(file=discord.File(card.img_filename()))
                 await message.channel.send(player_name + "'s score: " + str(new_game.players[player_name].calculate_score()))
 
                 # need to display one of dealer's cards face up 
@@ -67,8 +69,8 @@ class CardGameClient(discord.Client):
                 curr_player = curr_game.players[player_name]
                 # draw a card
                 new_card = curr_game.hit(player_name, 1)
-                await message.channel.send(player_name + " drew " + new_card[0].__str__())
-                await message.channel.send("After hitting, " + curr_player.log_player_hand())
+                await message.channel.send(player_name + " drew ", file=discord.File(new_card[0].img_filename()))
+                # await message.channel.send("After hitting, " + curr_player.log_player_hand())
                 await message.channel.send(player_name + "'s score: " + str(curr_player.calculate_score()))
                 if curr_game.calculate_bust(player_name):
                     await message.channel.send(player_name + " busted! haha loser")
@@ -93,27 +95,29 @@ class CardGameClient(discord.Client):
                 # send cpu's hand
                 curr_player = curr_game.players[player_name]
                 cpu_player = curr_game.players["CPU"]
-                await message.channel.send(cpu_player.log_player_hand())
-                cpu_score = cpu_player.calculate_score()
-                while cpu_player.calculate_score() < 17 :
+                for card in cpu_player.hand:
+                    await message.channel.send(file=discord.File(card.img_filename()))
+                # cpu_score = cpu_player.calculate_score()
+                # curr_playercurr_player.calculate_score()
+                while cpu_player.calculate_score() <= 16 :
                     curr_card = curr_game.hit("CPU", 1)[0]
-                    cpu_score = cpu_player.calculate_score()
-                    await message.channel.send("-----------\nCPU drew " + str(curr_card), file=discord.File(curr_card.img_filename()))
-                    await message.channel.send(cpu_player.log_player_hand())
+                    await message.channel.send("CPU drew: ", file=discord.File(curr_card.img_filename()))
                     await message.channel.send("CPU score " + str(cpu_player.calculate_score()))
-                if cpu_score > 21:
+                if cpu_player.calculate_score() > 21:
                     print(LOGGING_NAME, LOG_GAME, "cpu busted")
                     await message.channel.send("CPU busted. You win!!!")
-                elif cpu_score < curr_player.calculate_score():
+                elif cpu_player.calculate_score() < curr_player.calculate_score():
                     print(LOGGING_NAME, LOG_GAME, "cpu lost")
                     await message.channel.send("CPU lost. You win!!!")
-                elif cpu_score > curr_player.calculate_score():
+                elif cpu_player.calculate_score() > curr_player.calculate_score():
                     print(LOGGING_NAME, LOG_GAME, "cpu won")
                     await message.channel.send("CPU won. You lose :( F")
-                elif cpu_score == curr_player.calculate_score():
+                elif cpu_player.calculate_score() == curr_player.calculate_score():
                     print(LOGGING_NAME, LOG_GAME, "tie")
                     await message.channel.send("It's a tie...")
-
+                else:
+                    print(LOGGING_NAME, LOG_ERR, "game outcome is not well-defined?", cpu_player.calculate_score())
+                    
                 self.player_game_dict.pop(player_name)
 
 
