@@ -126,18 +126,14 @@ class Deck():
     deck = []
 
     def __init__(self):
-        # @todo generate deck lmoa
-        self.deck = [Card("Jack", "Clubs", 10),
-                    Card("King", "Clubs", 10),
-                    Card("Queen", "Clubs", 10),
-                    Card("Ace", "Clubs", 1),
-                    Card("Seven", "Clubs", 7),
-                    Card("Six", "Clubs", 6),
-                    Card("Five", "Clubs", 5),
-                    Card("Four", "Clubs", 4),
-                    Card("Three", "Clubs", 3),
-                    Card("Two", "Clubs", 2),]
-    
+        # generate deck lmoa
+        self.deck = []
+        for suit in ["Club", "Heart", "Spade", "Diamond"]:
+            for name, value in [("King", 10),("Queen", 10), ("Jack", 10), ("Ten", 10), ("Nine", 9), 
+            ("Eight", 8), ("Seven", 7), ("Six", 6), ("Five", 5), ("Four", 4), ("Three", 3), ("Two", 2)]:
+                self.deck.append(Card(name, suit, value))
+        
+        
 
     def draw(self, num_cards):
         cards_drawn = []

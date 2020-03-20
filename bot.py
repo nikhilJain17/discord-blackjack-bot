@@ -98,7 +98,8 @@ class CardGameClient(discord.Client):
                 while cpu_player.calculate_score() < 17 :
                     curr_card = curr_game.hit("CPU", 1)[0]
                     cpu_score = cpu_player.calculate_score()
-                    await message.channel.send("-----------\nCPU drew " + str(curr_card))
+                    card_file_img = discord.File("./card_assets/2_spade.png")
+                    await message.channel.send("-----------\nCPU drew " + str(curr_card), file=card_file_img)
                     await message.channel.send(cpu_player.log_player_hand())
                     await message.channel.send("CPU score " + str(cpu_player.calculate_score()))
                 if cpu_score > 21:
@@ -133,11 +134,17 @@ class CardGameClient(discord.Client):
 
         elif message.content == "--blackjack quit":
             print("haha loser")
+        elif message.content == "--blackjack 69":
+            time.sleep(1)
+            await message.channel.send("nice")
+        elif message.content == "--blackjack 420":
+            time.sleep(1)
+            await message.channel.send("nice")
+        
+        # asking for help or have a malformed instruction
         elif message.content == "--blackjack help":
             print("This is a help message")
-        elif message.content == "--blackjack 69420":
-            time.sleep(1)
-            await message.channel.send("--blackjack 69420")
+            await message.channel.send("To start a game: --blackjack start\nTo hit: --blackjack hit\nTo stay: --blackjack stay")
                 
 
         # if message
