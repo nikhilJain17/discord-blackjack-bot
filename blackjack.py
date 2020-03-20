@@ -111,7 +111,7 @@ class Card():
     suit = None
     numerical_value = None 
     name = None
-    color = None
+    color = None # @TODO delete field this probably
 
     def __init__(self, name, suit, value):
         self.value = value
@@ -120,6 +120,11 @@ class Card():
 
     def __str__(self):
         return "<" + str(self.name) + " of " + str(self.suit) + "> "
+
+    def img_filename(self):
+        return "./card_assets/" + self.name[0] + self.suit[0] + ".jpg"
+        
+
     
 
 class Deck():
@@ -129,8 +134,8 @@ class Deck():
         # generate deck lmoa
         self.deck = []
         for suit in ["Club", "Heart", "Spade", "Diamond"]:
-            for name, value in [("King", 10),("Queen", 10), ("Jack", 10), ("Ten", 10), ("Nine", 9), 
-            ("Eight", 8), ("Seven", 7), ("Six", 6), ("Five", 5), ("Four", 4), ("Three", 3), ("Two", 2)]:
+            for name, value in [("King", 10),("Queen", 10), ("Jack", 10), ("10", 10), ("9", 9), 
+            ("8", 8), ("7", 7), ("6", 6), ("5", 5), ("4", 4), ("3", 3), ("2", 2)]:
                 self.deck.append(Card(name, suit, value))
         
         

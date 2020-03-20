@@ -98,8 +98,7 @@ class CardGameClient(discord.Client):
                 while cpu_player.calculate_score() < 17 :
                     curr_card = curr_game.hit("CPU", 1)[0]
                     cpu_score = cpu_player.calculate_score()
-                    card_file_img = discord.File("./card_assets/2_spade.png")
-                    await message.channel.send("-----------\nCPU drew " + str(curr_card), file=card_file_img)
+                    await message.channel.send("-----------\nCPU drew " + str(curr_card), file=discord.File(curr_card.img_filename()))
                     await message.channel.send(cpu_player.log_player_hand())
                     await message.channel.send("CPU score " + str(cpu_player.calculate_score()))
                 if cpu_score > 21:
